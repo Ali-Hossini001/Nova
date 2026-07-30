@@ -665,7 +665,7 @@ function renderAds(){
 }
 
 let adW=false,AdCtrl=null;
-async function initAd(){try{AdCtrl=await window.Adsgram.init({blockId:"38991",debug:false});}catch(e){AdCtrl=null;}}
+async function initAd(){try{AdCtrl=await window.Adsgram.init({blockId:"40481",debug:false});}catch(e){AdCtrl=null;}}
 function showLd(txt){const o=document.getElementById('ldOverlay');o.classList.remove('ok');document.getElementById('ldTxt').textContent=txt;o.classList.add('show');}
 function showLdOk(txt){const o=document.getElementById('ldOverlay');o.classList.add('ok');document.getElementById('ldTxt').textContent=txt;setTimeout(()=>o.classList.remove('show','ok'),1100);}
 function hideLd(){document.getElementById('ldOverlay').classList.remove('show','ok');}
