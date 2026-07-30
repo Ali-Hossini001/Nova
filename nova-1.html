@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NovaCash</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<style>
+:root{
+  --bg:#050c18;
+  --bg2:#0d1b2e;
+  --bg3:#0a1525;
+  --c:#06b6d4;    /* cyan */
+  --c2:#ec4899;   /* pink */
+  --c3:#a855f7;   /* purple */
+  --g:#22c55e;    /* green */
+  --y:#eab308;    /* yellow */
+  --r:#ef4444;
+  --tx:#f0f9ff;
+  --tx2:#94a3b8;
+  --tx3:#475569;
+  --bd:#1e293b;
+  --font:'Arial',sans-serif;
+}
+[data-lang="fa"],[data-lang="ar"]{direction:rtl;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--tx);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+body{padding-bottom:100px;}
+
+/* ── DIAGONAL HEADER ── */
+.hdr{
+  position:relative;background:var(--bg2);
+  padding:18px 18px 52px;
+  clip-path:polygon(0 0,100% 0,100% 80%,0 100%);
+  border-bottom:2px solid var(--c);
+  box-shadow:0 0 40px rgba(6,182,212,0.15);
+}
+.hdr::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(6,182,212,0.07) 0%,rgba(236,72,153,0.05) 100%);
+  clip-path:polygon(0 0,100% 0,100% 80%,0 100%);
+}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.logo{display:flex;align-items:center;gap:8px;}
+.logo-mark{
+  width:36px;height:36px;border:2px solid var(--c);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(6,182,212,0.1);
+  position:relative;
+}
+.logo-mark::before{content:'';position:absolute;width:8px;height:8px;background:var(--c);top:-4px;right:-4px;}
+.logo-mark svg{width:18px;height:18px;stroke:var(--c);stroke-width:2;fill:none;}
+.logo-name{font-size:22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;}
+.logo-name .n1{color:var(--c);}
+.logo-name .n2{color:var(--tx);}
+.lang-box{
+  border:1.5px solid var(--bd);background:rgba(255,255,255,0.04);
+  padding:5px 11px;font-size:12px;font-weight:700;color:var(--tx2);
+  cursor:pointer;display:flex;align-items:center;gap:5px;font-family:var(--font);
+}
+
+/* ── PROFILE GRID ── */
+.profile-grid{
+  margin:0 14px;margin-top:-28px;
+  display:grid;grid-template-columns:auto 1fr;
+  gap:12px;align-items:end;position:relative;z-index:5;
+}
+.p-avatar-wrap{
+  width:64px;height:64px;border:2px solid var(--c);background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:900;color:var(--c);
+  position:relative;overflow:hidden;
+  box-shadow:0 0 24px rgba(6,182,212,0.35);
+}
+.p-avatar-wrap img{width:100%;height:100%;object-fit:cover;}
+.p-avatar-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--c);}
+.p-info-card{background:var(--bg2);border:1px solid var(--bd);padding:12px 14px;}
+.p-name{font-size:15px;font-weight:800;letter-spacing:.3px;}
+.p-id{font-size:10px;color:var(--tx3);margin-top:2px;}
+
+/* ── BALANCE HERO ── */
+.bal-hero{
+  margin:14px 14px 0;background:var(--bg2);border:1px solid var(--bd);
+  padding:16px;display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.bal-hero::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--c),var(--c2));
+}
+.bal-hero::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:80px;height:80px;
+  border:2px solid rgba(6,182,212,0.15);border-radius:50%;
+}
+.bal-left .lbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;}
+.bal-left .num{font-size:38px;font-weight:900;color:var(--tx);line-height:1.1;font-family:Arial,sans-serif;}
+.bal-left .num .unit{font-size:14px;color:var(--c);margin-left:4px;font-weight:700;}
+.wd-sharp{
+  border:2px solid var(--c2);background:transparent;
+  color:var(--c2);font-size:12px;font-weight:800;
+  padding:10px 16px;cursor:pointer;font-family:var(--font);
+  letter-spacing:.5px;text-transform:uppercase;
+  position:relative;z-index:1;
+  transition:all .15s;
+}
+.wd-sharp:hover{background:var(--c2);color:#fff;}
+.wd-sharp:active{transform:scale(0.95);}
+
+/* ── TAB STRIP ── */
+.tab-strip{
+  display:flex;margin:14px 14px 0;
+  border:1px solid var(--bd);background:var(--bg2);overflow:hidden;
+}
+.tab-btn{
+  flex:1;padding:12px 4px;font-size:12px;font-weight:800;
+  color:var(--tx2);cursor:pointer;border:none;font-family:var(--font);
+  background:transparent;text-transform:uppercase;letter-spacing:.5px;
+  border-right:1px solid var(--bd);transition:all .2s;
+}
+.tab-btn:last-child{border-right:none;}
+.tab-btn.active{background:rgba(6,182,212,0.12);color:var(--c);}
+.tab-btn svg{display:block;margin:0 auto 4px;width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;}
+
+/* ── SECTIONS ── */
+.section{display:none;}
+.section.active{display:block;animation:fadeX .25s ease;}
+@keyframes fadeX{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.sp{padding:14px 14px 0;}
+
+/* ── SECTION HEAD ── */
+.sh{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.sh-bar{width:3px;height:16px;background:linear-gradient(180deg,var(--c),var(--c2));}
+.sh-txt{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);}
+
+/* ── TASK ROW ── */
+.t-row{
+  background:var(--bg2);border:1px solid var(--bd);
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;margin-bottom:8px;
+  transition:border-color .15s;position:relative;overflow:hidden;
+}
+.t-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c3);}
+.t-row.done-t{border-color:rgba(34,197,94,0.4);}
+.t-row.done-t::before{background:var(--g);}
+.t-ico2{width:36px;height:36px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.t-ico2 svg{width:16px;height:16px;stroke:var(--c3);stroke-width:2;fill:none;}
+.t-row.done-t .t-ico2{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.25);}
+.t-row.done-t .t-ico2 svg{stroke:var(--g);}
+.t-bd{flex:1;}
+.t-nm{font-size:13px;font-weight:700;color:var(--tx);}
+.t-rw{font-size:11px;color:var(--g);font-weight:700;margin-top:2px;}
+.t-go{border:1px solid var(--c);background:transparent;color:var(--c);font-size:11px;font-weight:800;padding:7px 13px;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.3px;transition:all .15s;}
+.t-go:active{background:var(--c);color:var(--bg);}
+.t-dn{border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.08);color:var(--g);font-size:11px;font-weight:800;padding:7px 13px;cursor:default;font-family:var(--font);}
+
+/* ── STAT PAIR ── */
+.stat-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.stat-block{background:var(--bg2);border:1px solid var(--bd);padding:14px;position:relative;overflow:hidden;}
+.stat-block::after{content:'';position:absolute;right:0;bottom:0;width:40px;height:40px;background:linear-gradient(135deg,transparent 50%,rgba(6,182,212,0.08) 50%);}
+.sb-val{font-size:20px;font-weight:900;color:var(--tx);}
+.sb-val.cy{color:var(--c);}
+.sb-lbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-top:4px;}
+
+/* ── WATCH AD ── */
+.wa-card{
+  background:var(--bg2);border:1px solid var(--bd);
+  margin-bottom:14px;overflow:hidden;cursor:pointer;
+  position:relative;transition:border-color .15s;
+}
+.wa-card:active{border-color:var(--c);}
+.wa-top{
+  background:linear-gradient(90deg,rgba(6,182,212,0.15) 0%,rgba(236,72,153,0.10) 100%);
+  border-bottom:1px solid var(--bd);
+  padding:18px 16px;display:flex;align-items:center;gap:14px;
+  position:relative;overflow:hidden;
+}
+.wa-top::before{
+  content:'';position:absolute;right:0;top:0;bottom:0;
+  width:3px;background:linear-gradient(180deg,var(--c),var(--c2));
+}
+.play-sq{
+  width:56px;height:56px;background:rgba(6,182,212,0.12);
+  border:2px solid var(--c);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
+  box-shadow:0 0 20px rgba(6,182,212,0.25);
+}
+.play-sq::before{content:'';position:absolute;inset:-7px;border:1px solid rgba(6,182,212,0.3);animation:sqPulse 2s ease-out infinite;}
+@keyframes sqPulse{0%{opacity:.6;transform:scale(.9)}100%{opacity:0;transform:scale(1.25)}}
+.play-sq svg{width:22px;height:22px;fill:var(--c);margin-left:3px;}
+.wa-txt{flex:1;}
+.wa-title{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;}
+.wa-sub{font-size:11px;color:var(--tx2);margin-top:3px;}
+.earn-sq{
+  background:linear-gradient(135deg,var(--c),var(--c2));
+  padding:10px 14px;font-size:15px;font-weight:900;color:#fff;
+  white-space:nowrap;box-shadow:0 0 16px rgba(6,182,212,0.3);
+}
+.wa-bot{padding:12px 16px 14px;}
+.bar2{background:var(--bg3);height:6px;overflow:hidden;}
+.bar2-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--c2));transition:width .5s;}
+.bar2-row{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:6px;}
+.wa-cta{
+  margin-top:10px;padding:10px;
+  border:1px dashed rgba(6,182,212,0.4);
+  text-align:center;font-size:11px;font-weight:800;color:var(--c);
+  text-transform:uppercase;letter-spacing:.8px;background:rgba(6,182,212,0.04);
+}
+/* ripple */
+.cy-ripple{position:absolute;border-radius:0;background:rgba(6,182,212,0.2);transform:scale(0);animation:cyRp .6s ease-out forwards;pointer-events:none;}
+@keyframes cyRp{to{transform:scale(6);opacity:0;}}
+/* overlay */
+.ld2{position:absolute;inset:0;z-index:10;background:rgba(5,12,24,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.ld2.show{opacity:1;pointer-events:all;}
+.ld2-ring{width:32px;height:32px;border:2px solid rgba(6,182,212,0.2);border-top-color:var(--c);border-radius:50%;animation:spin2 .7s linear infinite;}
+.ld2-ok{width:32px;height:32px;background:var(--g);display:none;align-items:center;justify-content:center;}
+.ld2-ok svg{width:16px;height:16px;stroke:#fff;stroke-width:2.5;fill:none;}
+.ld2.ok .ld2-ring{display:none;}.ld2.ok .ld2-ok{display:flex;}
+.ld2-txt{font-size:12px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;}
+@keyframes spin2{to{transform:rotate(360deg)}}
+.done-strip{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);padding:18px;text-align:center;margin-bottom:14px;display:none;}
+.done-strip.show{display:block;}
+
+/* ── REFERRAL ── */
+.ref-top{
+  background:linear-gradient(135deg,var(--bg2),#0d0f30);
+  border:1px solid var(--bd);padding:22px 18px;
+  margin-bottom:8px;text-align:center;position:relative;overflow:hidden;
+}
+.ref-top::before{content:'';position:absolute;top:-40px;left:-40px;width:150px;height:150px;border-radius:50%;background:rgba(6,182,212,0.05);}
+.ref-top::after{content:'';position:absolute;bottom:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(236,72,153,0.05);}
+.ref-big{font-size:44px;font-weight:900;line-height:1;font-family:Arial,sans-serif;
+  background:linear-gradient(90deg,var(--c),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ref-unit{font-size:14px;font-weight:700;color:var(--tx2);margin-top:4px;}
+.ref-desc{font-size:12px;color:var(--tx3);margin-top:10px;line-height:1.6;position:relative;z-index:1;}
+.link-blk{
+  background:var(--bg2);border:1px solid var(--bd);
+  padding:11px 13px;margin:10px 0;
+  display:flex;align-items:center;gap:8px;
+}
+.link-mono{flex:1;font-size:10px;color:var(--tx2);word-break:break-all;font-family:monospace;direction:ltr;text-align:left;}
+.cp-btn{background:var(--c);color:var(--bg);border:none;padding:7px 13px;font-size:11px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;}
+.sh-btn{
+  width:100%;background:transparent;border:2px solid var(--c2);
+  color:var(--c2);padding:13px;font-size:13px;font-weight:800;
+  cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:12px;transition:all .15s;
+}
+.sh-btn:active{background:var(--c2);color:#fff;}
+.ref-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ref-cell{background:var(--bg2);border:1px solid var(--bd);padding:14px;text-align:center;}
+.ref-cell-v{font-size:22px;font-weight:900;color:var(--c);}
+.ref-cell-l{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-top:4px;}
+
+/* ── WITHDRAW ── */
+.bk-row{display:flex;align-items:center;gap:7px;margin-bottom:14px;cursor:pointer;width:fit-content;}
+.bk-row svg{width:16px;height:16px;stroke:var(--tx2);stroke-width:2;fill:none;}
+.bk-row span{font-size:12px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;}
+.notice2{background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--y);font-weight:700;display:flex;align-items:center;gap:7px;}
+.form2{background:var(--bg2);border:1px solid var(--bd);padding:20px;margin-bottom:14px;}
+.fl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px;display:block;}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--bd);padding:13px 14px;font-size:14px;color:var(--tx);font-family:var(--font);margin-bottom:14px;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--c);}
+.fh{font-size:10px;color:var(--tx3);margin-top:-10px;margin-bottom:14px;}
+.sub2{
+  width:100%;background:linear-gradient(90deg,var(--c),var(--c2));
+  border:none;padding:15px;color:#fff;font-size:13px;font-weight:900;
+  cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.8px;
+  box-shadow:0 0 20px rgba(6,182,212,0.25);transition:filter .15s;
+}
+.sub2:active{filter:brightness(0.9);}
+.h-item{background:var(--bg2);border:1px solid var(--bd);padding:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.hi-a{font-size:15px;font-weight:900;}
+.hi-d{font-size:10px;color:var(--tx3);margin-top:2px;}
+.hi-ad{font-size:10px;color:var(--tx2);margin-top:2px;font-family:monospace;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;}
+.sbg{padding:4px 10px;font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;}
+.sbg.pending{background:rgba(234,179,8,0.12);color:var(--y);}
+.sbg.completed{background:rgba(34,197,94,0.12);color:var(--g);}
+.sbg.rejected{background:rgba(239,68,68,0.12);color:var(--r);}
+.eh{text-align:center;padding:30px;color:var(--tx3);font-size:12px;}
+.wd-done{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25);padding:18px;text-align:center;display:none;margin-bottom:14px;}
+.wd-done.show{display:block;}
+
+/* ── LANG MODAL ── */
+.mb{display:none;position:fixed;inset:0;z-index:999;background:rgba(5,12,24,0.8);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
+.mb.open{display:flex;}
+.ms{background:var(--bg2);border-top:2px solid var(--c);width:100%;padding:24px 18px 44px;animation:su .3s ease;}
+@keyframes su{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mt{font-size:14px;font-weight:800;text-align:center;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px;color:var(--c);}
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.li{background:var(--bg3);border:1px solid var(--bd);padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--tx);}
+.li.sl{border-color:var(--c);background:rgba(6,182,212,0.08);color:var(--c);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:115px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--c);color:var(--c);padding:11px 22px;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;box-shadow:0 0 20px rgba(6,182,212,0.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--bg2);border-top:1px solid var(--c);
+  display:flex;height:68px;
+  box-shadow:0 0 30px rgba(6,182,212,0.15);
+}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
+.bni svg{width:20px;height:20px;stroke:var(--tx3);stroke-width:2;fill:none;transition:all .2s;}
+.bni .bnl{font-size:9px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;}
+.bni.ac svg{stroke:var(--c);filter:drop-shadow(0 0 6px rgba(6,182,212,0.6));}
+.bni.ac .bnl{color:var(--c);}
+.bni-div{width:1px;background:var(--bd);align-self:stretch;margin:12px 0;}
+</style>
+</head>
+<body data-lang="en">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="logo-name"><span class="n1">NOVA</span><span class="n2">CASH</span></div>
+    </div>
+    <button class="lang-box" onclick="openLM()">
+      <span id="lf">🇬🇧</span><span id="lc">EN</span>
+    </button>
+  </div>
+</div>
+
+<!-- PROFILE GRID -->
+<div class="profile-grid">
+  <div class="p-avatar-wrap" id="userAvatar">N</div>
+  <div class="p-info-card">
+    <div class="p-name" id="userName">Loading...</div>
+    <div class="p-id" id="userId">ID: —</div>
+  </div>
+</div>
+
+<!-- BALANCE HERO -->
+<div class="bal-hero" style="margin-top:10px">
+  <div class="bal-left">
+    <div class="lbl" data-i18n="totalBalance">TOTAL BALANCE</div>
+    <div class="num"><span id="balanceNum">0.00</span><span class="unit">USDT</span></div>
+  </div>
+  <button class="wd-sharp" onclick="openWd()">
+    <span data-i18n="withdraw">Withdraw</span>
+  </button>
+</div>
+
+<!-- TAB STRIP -->
+<div class="tab-strip">
+  <button class="tab-btn active" onclick="switchT('home')" id="tn-home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span data-i18n="home">Home</span>
+  </button>
+  <button class="tab-btn" onclick="switchT('tasks')" id="tn-tasks">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <span data-i18n="tasks">Tasks</span>
+  </button>
+  <button class="tab-btn" onclick="switchT('referral')" id="tn-referral">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span data-i18n="referral">Referral</span>
+  </button>
+</div>
+
+<!-- HOME -->
+<div id="sec-home" class="section active sp">
+  <div style="height:12px"></div>
+  <div class="sh"><div class="sh-bar"></div><div class="sh-txt" data-i18n="quickTasks">Quick Tasks</div></div>
+  <div id="ticksList"></div>
+</div>
+
+<!-- TASKS -->
+<div id="sec-tasks" class="section">
+  <div class="stat-pair" style="padding:14px 14px 0">
+    <div class="stat-block">
+      <div class="sb-val" id="totalWatched">0</div>
+      <div class="sb-lbl" data-i18n="totalWatched">Watched</div>
+    </div>
+    <div class="stat-block">
+      <div class="sb-val cy" id="totalEarned">0.00</div>
+      <div class="sb-lbl">USDT Earned</div>
+    </div>
+  </div>
+  <div class="sp" style="padding-top:0">
+    <!-- WATCH AD -->
+    <div class="wa-card" id="adCard" onclick="watchAd(event)">
+      <div class="ld2" id="ld2">
+        <div class="ld2-ring"></div>
+        <div class="ld2-ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="ld2-txt" id="ld2txt">Loading...</div>
+      </div>
+      <div class="wa-top">
+        <div class="play-sq"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="wa-txt">
+          <div class="wa-title" data-i18n="watchAd">Watch Ad</div>
+          <div class="wa-sub" data-i18n="completeVideo">Complete to earn instantly</div>
+        </div>
+        <div class="earn-sq">+0.1 USDT</div>
+      </div>
+      <div class="wa-bot">
+        <div class="bar2"><div class="bar2-fill" id="adBar" style="width:0%"></div></div>
+        <div class="bar2-row">
+          <span id="adSt" data-i18n="readyToEarn">Ready</span>
+          <span id="adCnt">0/20 <span data-i18n="in24h">24h</span></span>
+        </div>
+        <div class="wa-cta">⚡ TAP TO WATCH & EARN</div>
+      </div>
+    </div>
+    <div class="done-strip" id="adDone">
+      <div style="font-size:28px;color:var(--g);font-weight:900">✓</div>
+      <div style="font-size:13px;font-weight:800;color:var(--g);margin-top:6px;text-transform:uppercase;letter-spacing:.5px" data-i18n="allAdsDone">Daily limit reached!</div>
+      <div style="font-size:11px;color:var(--tx3);margin-top:4px" id="adReset"></div>
+    </div>
+    <div class="sh"><div class="sh-bar"></div><div class="sh-txt" data-i18n="channelsAndBots">Channels & Bots</div></div>
+    <div id="tasksList"></div>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div id="sec-referral" class="section sp">
+  <div style="height:12px"></div>
+  <div class="ref-top">
+    <div class="ref-big">1.00</div>
+    <div class="ref-unit">USDT per referral</div>
+    <div class="ref-desc" data-i18n="inviteDesc">Share your unique link and earn 1.00 USDT per friend who joins!</div>
+  </div>
+  <div class="sh"><div class="sh-bar"></div><div class="sh-txt" data-i18n="yourInviteLink">Invite Link</div></div>
+  <div class="link-blk">
+    <div class="link-mono" id="inviteLink">https://t.me/NovaCashBot/cash?startapp=...</div>
+    <button class="cp-btn" onclick="cpLink()" data-i18n="copy">Copy</button>
+  </div>
+  <button class="sh-btn" onclick="shareInvite()">→ <span data-i18n="shareWithFriends">Share with Friends</span></button>
+  <div class="ref-row">
+    <div class="ref-cell">
+      <div class="ref-cell-v" id="friendsCount">0</div>
+      <div class="ref-cell-l" data-i18n="friendsInvited">Invited</div>
+    </div>
+    <div class="ref-cell">
+      <div class="ref-cell-v" id="inviteEarned">0.00</div>
+      <div class="ref-cell-l">USDT Earned</div>
+    </div>
+  </div>
+</div>
+
+<!-- WITHDRAW -->
+<div id="sec-withdraw" class="section sp">
+  <div style="height:12px"></div>
+  <div class="bk-row" onclick="closeWd()">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    <span data-i18n="back">Back</span>
+  </div>
+  <div class="notice2">⚠ <span data-i18n="minWithdrawNote">Minimum 15 USDT required to withdraw</span></div>
+  <div class="form2">
+    <label class="fl" data-i18n="amount">Amount</label>
+    <input type="number" class="fi" id="wdAmt" placeholder="Min 15.00 USDT" step="0.01" min="15">
+    <div class="fh">Available: <span id="availBal">0.00</span> USDT</div>
+    <label class="fl" data-i18n="walletAddress">USDT TRC20 Wallet</label>
+    <input type="text" class="fi" id="wdAddr" placeholder="T..." style="direction:ltr">
+    <button class="sub2" onclick="submitWd()"><span data-i18n="submitWithdrawal">Submit Withdrawal</span></button>
+  </div>
+  <div class="wd-done" id="wdOk">
+    <div style="font-size:13px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.5px" data-i18n="withdrawProcessing">Processing...</div>
+    <div style="font-size:11px;color:var(--tx3);margin-top:6px;line-height:1.6" id="wdDetail"></div>
+  </div>
+  <div class="sh"><div class="sh-bar" style="background:var(--g)"></div><div class="sh-txt" data-i18n="withdrawalHistory">History</div></div>
+  <div id="histList"></div>
+</div>
+
+<!-- LANG MODAL -->
+<div class="mb" id="lm" onclick="closeLM(event)">
+  <div class="ms">
+    <div class="mt" data-i18n="chooseLanguage">Choose Language</div>
+    <div class="lg" id="lgrid"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <div class="bni ac" onclick="switchT('home')" id="bn-home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <div class="bnl" data-i18n="home">Home</div>
+  </div>
+  <div class="bni-div"></div>
+  <div class="bni" onclick="switchT('tasks')" id="bn-tasks">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <div class="bnl" data-i18n="tasks">Tasks</div>
+  </div>
+  <div class="bni-div"></div>
+  <div class="bni" onclick="switchT('referral')" id="bn-referral">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div class="bnl" data-i18n="referral">Referral</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TR={
+  en:{totalBalance:"TOTAL BALANCE",home:"Home",tasks:"Tasks",referral:"Referral",back:"Back",quickTasks:"Quick Tasks",channelsAndBots:"Channels & Bots",watchAndEarn:"Watch & Earn",totalWatched:"Watched",watchAd:"Watch Ad",completeVideo:"Complete to earn instantly",readyToEarn:"Ready",in24h:"24h",allAdsDone:"Daily limit reached!",inviteAndEarn:"Invite & Earn",inviteDesc:"Share your unique link and earn 1.00 USDT per friend who joins!",yourInviteLink:"Invite Link",copy:"Copy",shareWithFriends:"Share with Friends",friendsInvited:"Invited",earnedFromInvites:"USDT Earned",withdrawFunds:"Withdraw",minWithdrawNote:"Minimum 15 USDT required to withdraw",amount:"Amount",walletAddress:"USDT TRC20 Wallet",submitWithdrawal:"Submit Withdrawal",withdrawProcessing:"Processing...",withdrawalHistory:"History",chooseLanguage:"Choose Language",taskGo:"Join",taskDone:"Done",completed:"Completed",pending:"Pending",copied:"Copied!",withdrawSubmitted:"Submitted!",insufficientBalance:"Insufficient!",enterAmount:"Enter amount",enterAddress:"Enter address",minAmount:"Min 15 USDT",withdraw:"Withdraw"},
+  fa:{totalBalance:"موجودی کل",home:"خانه",tasks:"تسک‌ها",referral:"دعوت",back:"بازگشت",quickTasks:"تسک‌های سریع",channelsAndBots:"کانال‌ها و ربات‌ها",watchAndEarn:"تماشا و کسب",totalWatched:"تماشا",watchAd:"تماشای تبلیغ",completeVideo:"ویدیو را کامل تماشا کن",readyToEarn:"آماده",in24h:"۲۴ ساعت",allAdsDone:"سقف روزانه پر شد!",inviteAndEarn:"دعوت کن و کسب کن",inviteDesc:"لینک خود را به اشتراک بگذار و برای هر دوست ۱.۰۰ USDT کسب کن!",yourInviteLink:"لینک دعوت",copy:"کپی",shareWithFriends:"اشتراک‌گذاری",friendsInvited:"دعوت شده",earnedFromInvites:"USDT کسب‌شده",withdrawFunds:"برداشت",minWithdrawNote:"حداقل ۱۵ USDT",amount:"مقدار",walletAddress:"آدرس کیف پول",submitWithdrawal:"ارسال درخواست",withdrawProcessing:"در حال پردازش...",withdrawalHistory:"تاریخچه",chooseLanguage:"انتخاب زبان",taskGo:"عضویت",taskDone:"انجام شد",completed:"تکمیل شد",pending:"در انتظار",copied:"کپی شد!",withdrawSubmitted:"ارسال شد!",insufficientBalance:"ناکافی!",enterAmount:"مقدار وارد کنید",enterAddress:"آدرس وارد کنید",minAmount:"حداقل ۱۵ USDT",withdraw:"برداشت"},
+  ar:{totalBalance:"الرصيد",home:"الرئيسية",tasks:"مهام",referral:"دعوة",back:"رجوع",quickTasks:"مهام سريعة",channelsAndBots:"قنوات وبوتات",watchAndEarn:"شاهد واكسب",totalWatched:"مشاهدات",watchAd:"مشاهدة إعلان",completeVideo:"أكمل الفيديو",readyToEarn:"جاهز",in24h:"24س",allAdsDone:"الحد اليومي!",inviteAndEarn:"ادعُ واكسب",inviteDesc:"شارك واكسب 1.00 USDT لكل صديق!",yourInviteLink:"رابط الدعوة",copy:"نسخ",shareWithFriends:"مشاركة",friendsInvited:"مدعوون",earnedFromInvites:"USDT مكسوب",withdrawFunds:"سحب",minWithdrawNote:"الحد الأدنى 15 USDT",amount:"المبلغ",walletAddress:"عنوان المحفظة",submitWithdrawal:"إرسال",withdrawProcessing:"معالجة...",withdrawalHistory:"السجل",chooseLanguage:"اللغة",taskGo:"انضم",taskDone:"تم",completed:"مكتمل",pending:"معلق",copied:"تم النسخ!",withdrawSubmitted:"تم الإرسال!",insufficientBalance:"رصيد غير كافٍ!",enterAmount:"أدخل المبلغ",enterAddress:"أدخل العنوان",minAmount:"الحد الأدنى 15",withdraw:"سحب"},
+  ru:{totalBalance:"БАЛАНС",home:"Главная",tasks:"Задания",referral:"Реферал",back:"Назад",quickTasks:"Быстрые",channelsAndBots:"Каналы и боты",watchAndEarn:"Смотри и зарабатывай",totalWatched:"Просмотрено",watchAd:"Реклама",completeVideo:"Досмотри и заработай",readyToEarn:"Готово",in24h:"24ч",allAdsDone:"Лимит!",inviteAndEarn:"Приглашай",inviteDesc:"Зарабатывай 1.00 USDT за каждого друга!",yourInviteLink:"Ссылка",copy:"Копировать",shareWithFriends:"Поделиться",friendsInvited:"Приглашено",earnedFromInvites:"Заработано",withdrawFunds:"Вывод",minWithdrawNote:"Минимум 15 USDT",amount:"Сумма",walletAddress:"Адрес",submitWithdrawal:"Отправить",withdrawProcessing:"Обработка...",withdrawalHistory:"История",chooseLanguage:"Язык",taskGo:"Перейти",taskDone:"Готово",completed:"Выполнено",pending:"Ожидание",copied:"Скопировано!",withdrawSubmitted:"Отправлено!",insufficientBalance:"Недостаточно!",enterAmount:"Введите сумму",enterAddress:"Введите адрес",minAmount:"Мин 15 USDT",withdraw:"Вывод"},
+  tr:{totalBalance:"BAKİYE",home:"Ana",tasks:"Görevler",referral:"Davet",back:"Geri",quickTasks:"Hızlı",channelsAndBots:"Kanallar",watchAndEarn:"İzle ve Kazan",totalWatched:"İzlenen",watchAd:"Reklam",completeVideo:"Videoyu tamamla",readyToEarn:"Hazır",in24h:"24s",allAdsDone:"Günlük limit!",inviteAndEarn:"Davet Et",inviteDesc:"Paylaş, her arkadaş 1.00 USDT!",yourInviteLink:"Davet Linki",copy:"Kopyala",shareWithFriends:"Paylaş",friendsInvited:"Davet",earnedFromInvites:"Kazanılan",withdrawFunds:"Çekim",minWithdrawNote:"Min 15 USDT",amount:"Miktar",walletAddress:"Cüzdan",submitWithdrawal:"Gönder",withdrawProcessing:"İşleniyor...",withdrawalHistory:"Geçmiş",chooseLanguage:"Dil",taskGo:"Git",taskDone:"Tamam",completed:"Tamamlandı",pending:"Bekliyor",copied:"Kopyalandı!",withdrawSubmitted:"Gönderildi!",insufficientBalance:"Yetersiz!",enterAmount:"Miktar gir",enterAddress:"Adres gir",minAmount:"Min 15 USDT",withdraw:"Çekim"},
+  hi:{totalBalance:"बैलेंस",home:"होम",tasks:"कार्य",referral:"आमंत्रण",back:"वापस",quickTasks:"त्वरित",channelsAndBots:"चैनल",watchAndEarn:"देखो कमाओ",totalWatched:"देखा",watchAd:"विज्ञापन",completeVideo:"पूरा करें",readyToEarn:"तैयार",in24h:"24घ",allAdsDone:"सीमा!",inviteAndEarn:"आमंत्रित करो",inviteDesc:"शेयर करें, 1.00 USDT कमाएं!",yourInviteLink:"लिंक",copy:"कॉपी",shareWithFriends:"शेयर",friendsInvited:"मित्र",earnedFromInvites:"कमाई",withdrawFunds:"निकासी",minWithdrawNote:"न्यूनतम 15 USDT",amount:"राशि",walletAddress:"पता",submitWithdrawal:"जमा करें",withdrawProcessing:"प्रोसेसिंग...",withdrawalHistory:"इतिहास",chooseLanguage:"भाषा",taskGo:"जाएं",taskDone:"हो गया",completed:"पूर्ण",pending:"प्रतीक्षारत",copied:"कॉपी!",withdrawSubmitted:"जमा!",insufficientBalance:"अपर्याप्त!",enterAmount:"राशि दर्ज",enterAddress:"पता दर्ज",minAmount:"न्यूनतम 15",withdraw:"निकासी"},
+  zh:{totalBalance:"余额",home:"首页",tasks:"任务",referral:"邀请",back:"返回",quickTasks:"快速",channelsAndBots:"频道",watchAndEarn:"看广告赚钱",totalWatched:"观看",watchAd:"广告",completeVideo:"完成视频",readyToEarn:"准备好",in24h:"24h",allAdsDone:"已达上限！",inviteAndEarn:"邀请赚钱",inviteDesc:"分享链接，每位朋友1.00 USDT！",yourInviteLink:"邀请链接",copy:"复制",shareWithFriends:"分享",friendsInvited:"已邀请",earnedFromInvites:"收益",withdrawFunds:"提现",minWithdrawNote:"最低15 USDT",amount:"金额",walletAddress:"地址",submitWithdrawal:"提交",withdrawProcessing:"处理中...",withdrawalHistory:"历史",chooseLanguage:"语言",taskGo:"前往",taskDone:"完成",completed:"已完成",pending:"待处理",copied:"已复制！",withdrawSubmitted:"已提交！",insufficientBalance:"余额不足！",enterAmount:"输入金额",enterAddress:"输入地址",minAmount:"最低15",withdraw:"提现"},
+  es:{totalBalance:"SALDO",home:"Inicio",tasks:"Tareas",referral:"Invitar",back:"Atrás",quickTasks:"Rápidas",channelsAndBots:"Canales",watchAndEarn:"Mira y Gana",totalWatched:"Visto",watchAd:"Anuncio",completeVideo:"Completa el video",readyToEarn:"Listo",in24h:"24h",allAdsDone:"¡Límite!",inviteAndEarn:"Invita",inviteDesc:"Comparte, 1.00 USDT por amigo!",yourInviteLink:"Enlace",copy:"Copiar",shareWithFriends:"Compartir",friendsInvited:"Invitados",earnedFromInvites:"Ganado",withdrawFunds:"Retirar",minWithdrawNote:"Mínimo 15 USDT",amount:"Cantidad",walletAddress:"Dirección",submitWithdrawal:"Enviar",withdrawProcessing:"Procesando...",withdrawalHistory:"Historial",chooseLanguage:"Idioma",taskGo:"Ir",taskDone:"Hecho",completed:"Completado",pending:"Pendiente",copied:"¡Copiado!",withdrawSubmitted:"¡Enviado!",insufficientBalance:"¡Insuficiente!",enterAmount:"Ingresa monto",enterAddress:"Ingresa dirección",minAmount:"Mín 15",withdraw:"Retirar"},
+  fr:{totalBalance:"SOLDE",home:"Accueil",tasks:"Tâches",referral:"Inviter",back:"Retour",quickTasks:"Rapides",channelsAndBots:"Chaînes",watchAndEarn:"Regarder et Gagner",totalWatched:"Vu",watchAd:"Annonce",completeVideo:"Complétez",readyToEarn:"Prêt",in24h:"24h",allAdsDone:"Limite!",inviteAndEarn:"Inviter",inviteDesc:"Partagez, 1.00 USDT par ami!",yourInviteLink:"Lien",copy:"Copier",shareWithFriends:"Partager",friendsInvited:"Invités",earnedFromInvites:"Gagné",withdrawFunds:"Retirer",minWithdrawNote:"Minimum 15 USDT",amount:"Montant",walletAddress:"Adresse",submitWithdrawal:"Envoyer",withdrawProcessing:"Traitement...",withdrawalHistory:"Historique",chooseLanguage:"Langue",taskGo:"Aller",taskDone:"Fait",completed:"Terminé",pending:"En attente",copied:"Copié!",withdrawSubmitted:"Envoyé!",insufficientBalance:"Insuffisant!",enterAmount:"Entrez le montant",enterAddress:"Entrez l'adresse",minAmount:"Min 15",withdraw:"Retirer"},
+  de:{totalBalance:"GUTHABEN",home:"Start",tasks:"Aufgaben",referral:"Einladen",back:"Zurück",quickTasks:"Schnell",channelsAndBots:"Kanäle",watchAndEarn:"Anschauen und Verdienen",totalWatched:"Gesehen",watchAd:"Werbung",completeVideo:"Abschließen",readyToEarn:"Bereit",in24h:"24Std",allAdsDone:"Limit!",inviteAndEarn:"Einladen",inviteDesc:"Teile, 1.00 USDT pro Freund!",yourInviteLink:"Link",copy:"Kopieren",shareWithFriends:"Teilen",friendsInvited:"Eingeladen",earnedFromInvites:"Verdient",withdrawFunds:"Abheben",minWithdrawNote:"Minimum 15 USDT",amount:"Betrag",walletAddress:"Adresse",submitWithdrawal:"Senden",withdrawProcessing:"Verarbeitung...",withdrawalHistory:"Historie",chooseLanguage:"Sprache",taskGo:"Gehen",taskDone:"Fertig",completed:"Abgeschlossen",pending:"Ausstehend",copied:"Kopiert!",withdrawSubmitted:"Gesendet!",insufficientBalance:"Unzureichend!",enterAmount:"Betrag eingeben",enterAddress:"Adresse eingeben",minAmount:"Min 15",withdraw:"Abheben"},
+};
+const LANGS=[{code:'en',name:'English',flag:'🇬🇧',dir:'ltr'},{code:'fa',name:'فارسی',flag:'🇮🇷',dir:'rtl'},{code:'ar',name:'العربية',flag:'🇸🇦',dir:'rtl'},{code:'ru',name:'Русский',flag:'🇷🇺',dir:'ltr'},{code:'tr',name:'Türkçe',flag:'🇹🇷',dir:'ltr'},{code:'hi',name:'हिन्दी',flag:'🇮🇳',dir:'ltr'},{code:'zh',name:'中文',flag:'🇨🇳',dir:'ltr'},{code:'es',name:'Español',flag:'🇪🇸',dir:'ltr'},{code:'fr',name:'Français',flag:'🇫🇷',dir:'ltr'},{code:'de',name:'Deutsch',flag:'🇩🇪',dir:'ltr'}];
+const TASKS=[
+  {id:'t1',tp:'ch',n:'USDT Channel',lk:'https://t.me/XIONRO',r:0.2},
+  {id:'t2',tp:'ch',n:'Beast Hack',lk:'https://t.me/Beast_Hac1k',r:0.2},
+  {id:'t3',tp:'ch',n:'Money Plus',lk:'https://t.me/Money_Plus12',r:0.2},
+  {id:'t4',tp:'bt',n:'Money Plus Bot',lk:'https://t.me/Money_Plus12_Bot/moneyplus?startapp=6423335359',r:0.2},
+  {id:'t5',tp:'bt',n:'Cash Plus Bot',lk:'https://t.me/CashPlus_Bot/cashplus?startapp=5206091997',r:0.2},
+];
+const FDB='https://usdt-reward-default-rtdb.firebaseio.com';
+let S={lang:'en',balance:0,aw24:0,awStart:0,tw:0,te:0,fc:0,ie:0,tasks:{t1:false,t2:false,t3:false,t4:false,t5:false},hist:[],uid:null,uname:null,uphoto:null};
+function gk(){return 'nc_'+(S.uid||'g');}
+function ls(){try{const d=localStorage.getItem('nc2');if(d){const p=JSON.parse(d);S.uid=p.uid||null;S.uname=p.uname||null;S.uphoto=p.uphoto||null;S.lang=p.lang||'en';}}catch(e){}}
+function lus(){try{const d=localStorage.getItem(gk());if(d)S={...S,...JSON.parse(d)};}catch(e){}}
+function ss(){try{localStorage.setItem(gk(),JSON.stringify(S));}catch(e){}sp();}
+function sp(){try{if(!S.uid)return;fetch(`${FDB}/members/${S.uid}.json`,{method:'PUT',body:JSON.stringify({userId:String(S.uid),name:S.uname||'NovaCash User',photo:S.uphoto||null,lang:S.lang,balance:S.balance,adsWatched24h:S.aw24,totalWatched:S.tw,totalEarned:S.te,friendsCount:S.fc,inviteEarned:S.ie,tasks:S.tasks,tasksDone:Object.values(S.tasks||{}).filter(Boolean).length,lastActive:Date.now()})}).catch(()=>{});}catch(e){}}
+function t(k){return(TR[S.lang]||TR.en)[k]||(TR.en)[k]||k;}
+window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();
+function init(){
+  ls();
+  const tg=window.Telegram?.WebApp?.initDataUnsafe?.user;
+  if(tg){S.uid=tg.id;S.uname=tg.first_name+(tg.last_name?' '+tg.last_name:'');S.uphoto=tg.photo_url||null;}
+  else{if(!S.uid)S.uid=Math.floor(Math.random()*9e6+1e6);if(!S.uname)S.uname='NovaCash User';}
+  lus();
+  if(tg){S.uid=tg.id;S.uname=tg.first_name+(tg.last_name?' '+tg.last_name:'');S.uphoto=tg.photo_url||null;}
+  if(!S.awStart||Date.now()-S.awStart>=86400000){S.aw24=0;S.awStart=Date.now();}
+  chkRef();ss();applyL(S.lang);renderAll();initAd();syncRef();syncWd();
+}
+function chkRef(){try{const p=window.Telegram?.WebApp?.initDataUnsafe?.start_param;if(p&&p!==String(S.uid)&&!S.refPushed){S.referredBy=p;ss();pushRef(p,S.uid).then(ok=>{if(ok){S.refPushed=true;ss();}});}}catch(e){}}
+function renderAll(){rPro();rLang();rTicks();rTasks();rAds();rInv();rWd();}
+function rPro(){
+  document.getElementById('userName').textContent=S.uname||'NovaCash User';
+  document.getElementById('userId').textContent='ID: '+(S.uid||'—');
+  document.getElementById('balanceNum').textContent=S.balance.toFixed(2);
+  document.getElementById('availBal').textContent=S.balance.toFixed(2);
+  const av=document.getElementById('userAvatar');
+  if(S.uphoto)av.innerHTML=`<img src="${S.uphoto}" alt="">`;
+  else av.textContent=(S.uname||'N').charAt(0).toUpperCase();
+}
+function applyL(lang){
+  S.lang=lang;const ld=LANGS.find(l=>l.code===lang)||LANGS[0];
+  document.body.setAttribute('data-lang',lang);
+  document.documentElement.setAttribute('dir',ld.dir);
+  document.getElementById('lf').textContent=ld.flag;
+  document.getElementById('lc').textContent=lang.toUpperCase();
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n')));
+  rTicks();rTasks();rAds();ss();
+}
+function openLM(){document.getElementById('lm').classList.add('open');}
+function closeLM(e){if(e.target===document.getElementById('lm'))document.getElementById('lm').classList.remove('open');}
+function rLang(){document.getElementById('lgrid').innerHTML=LANGS.map(l=>`<div class="li ${l.code===S.lang?'sl':''}" onclick="selLang('${l.code}')"><span>${l.flag}</span><span>${l.name}</span></div>`).join('');}
+function selLang(c){applyL(c);rLang();document.getElementById('lm').classList.remove('open');}
+
+function switchT(tab){
+  ['home','tasks','referral','withdraw'].forEach(x=>{document.getElementById('sec-'+x).classList.remove('active');});
+  document.getElementById('sec-'+tab).classList.add('active');
+  ['home','tasks','referral'].forEach(x=>{document.getElementById('tn-'+x).classList.remove('active');document.getElementById('bn-'+x).classList.remove('ac');});
+  if(tab!=='withdraw'){document.getElementById('tn-'+tab).classList.add('active');document.getElementById('bn-'+tab).classList.add('ac');}
+  if(tab==='withdraw'){rWd();syncWd();}
+}
+function openWd(){switchT('withdraw');}
+function closeWd(){switchT('home');}
+
+const ICO_CH=`<svg viewBox="0 0 24 24" stroke-width="2" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.48 10 19.79 19.79 0 0 1 1.41 1.36 2 2 0 0 1 3.39 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.72 6.72l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+const ICO_BT=`<svg viewBox="0 0 24 24" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>`;
+const ICO_OK=`<svg viewBox="0 0 24 24" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+function rTicks(){
+  document.getElementById('ticksList').innerHTML=TASKS.map(tk=>`
+    <div class="t-row ${S.tasks[tk.id]?'done-t':''}">
+      <div class="t-ico2">${S.tasks[tk.id]?ICO_OK:(tk.tp==='ch'?ICO_CH:ICO_BT)}</div>
+      <div class="t-bd"><div class="t-nm">${tk.n}</div><div class="t-rw">+${tk.r} USDT</div></div>
+      ${S.tasks[tk.id]?`<div class="t-dn">${t('taskDone')}</div>`:`<button class="t-go" onclick="doTask('${tk.id}')">${t('taskGo')}</button>`}
+    </div>`).join('');
+}
+function rTasks(){
+  document.getElementById('tasksList').innerHTML=TASKS.map(tk=>`
+    <div class="t-row ${S.tasks[tk.id]?'done-t':''}">
+      <div class="t-ico2">${S.tasks[tk.id]?ICO_OK:(tk.tp==='ch'?ICO_CH:ICO_BT)}</div>
+      <div class="t-bd"><div class="t-nm">${tk.n}</div><div class="t-rw">+${tk.r} USDT</div></div>
+      ${S.tasks[tk.id]?`<div class="t-dn">${t('taskDone')}</div>`:`<button class="t-go" onclick="doTask('${tk.id}')">${t('taskGo')}</button>`}
+    </div>`).join('');
+}
+function doTask(id){
+  if(S.tasks[id])return;const tk=TASKS.find(x=>x.id===id);if(!tk)return;
+  if(tk.lk)window.open(tk.lk,'_blank');
+  setTimeout(()=>{S.tasks[id]=true;S.balance=+(S.balance+tk.r).toFixed(2);ss();rPro();rTicks();rTasks();toast(`+${tk.r} USDT`);},1500);
+}
+function rAds(){
+  document.getElementById('totalWatched').textContent=S.tw;
+  document.getElementById('totalEarned').textContent=S.te.toFixed(2);
+  document.getElementById('adCnt').innerHTML=`${S.aw24}/20 <span data-i18n="in24h">${t('in24h')}</span>`;
+  document.getElementById('adBar').style.width=(S.aw24/20*100)+'%';
+  if(S.aw24>=20){
+    document.getElementById('adCard').style.display='none';
+    document.getElementById('adDone').classList.add('show');
+    const h=Math.max(0,Math.ceil((86400000-(Date.now()-S.awStart))/3600000));
+    document.getElementById('adReset').textContent=`~${h}h remaining`;
+  }else{
+    document.getElementById('adCard').style.display='block';
+    document.getElementById('adDone').classList.remove('show');
+    document.getElementById('adSt').textContent=t('readyToEarn');
+  }
+}
+let adW=false,AC=null;
+async function initAd(){try{AC=await window.Adsgram.init({blockId:"38991",debug:false});}catch(e){AC=null;}}
+function shLd(tx){const o=document.getElementById('ld2');o.classList.remove('ok');document.getElementById('ld2txt').textContent=tx;o.classList.add('show');}
+function shOk(tx){const o=document.getElementById('ld2');o.classList.add('ok');document.getElementById('ld2txt').textContent=tx;setTimeout(()=>o.classList.remove('show','ok'),1100);}
+function hdLd(){document.getElementById('ld2').classList.remove('show','ok');}
+function creditAd(){
+  if(!S.awStart||Date.now()-S.awStart>=86400000){S.aw24=0;S.awStart=Date.now();}
+  S.aw24++;S.tw++;S.balance=+(S.balance+0.1).toFixed(2);S.te=+(S.te+0.1).toFixed(2);
+  ss();rPro();rAds();shOk('+0.1 USDT');toast('+0.1 USDT ⚡');
+}
+function watchAd(e){
+  if(adW||S.aw24>=20)return;
+  const card=document.getElementById('adCard');
+  const rp=document.createElement('div');rp.className='cy-ripple';
+  const rc=card.getBoundingClientRect();const x=e?e.clientX-rc.left:rc.width/2,y=e?e.clientY-rc.top:rc.height/2;
+  const sz=Math.max(rc.width,rc.height);rp.style.cssText=`width:${sz}px;height:${sz}px;left:${x-sz/2}px;top:${y-sz/2}px`;
+  card.appendChild(rp);setTimeout(()=>rp.remove(),650);
+  shLd('Loading...');
+  if(AC){adW=true;AC.show().then(()=>{adW=false;creditAd();}).catch(()=>{adW=false;hdLd();});return;}
+  adW=true;let s=5;
+  const iv=setInterval(()=>{s--;document.getElementById('ld2txt').textContent=`${s}s`;if(s<=0){clearInterval(iv);adW=false;creditAd();}},1000);
+}
+function getLink(uid){return `https://t.me/NovaCashBot/cash?startapp=${uid||'USER_ID'}`;}
+function rInv(){
+  document.getElementById('inviteLink').textContent=getLink(S.uid);
+  document.getElementById('friendsCount').textContent=S.fc;
+  document.getElementById('inviteEarned').textContent=S.ie.toFixed(2);
+}
+function cpLink(){const l=getLink(S.uid);if(navigator.clipboard)navigator.clipboard.writeText(l).catch(()=>fc2(l));else fc2(l);toast(t('copied'));}
+function fc2(tx){const el=document.createElement('textarea');el.value=tx;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);}
+function shareInvite(){const l=getLink(S.uid);if(window.Telegram?.WebApp)window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent('⚡ Join NovaCash and earn free USDT!')}`);else{fc2(l);toast(t('copied'));}}
+async function getRefs(){try{const r=await fetch(`${FDB}/referrals.json`,{cache:'no-store'});if(!r.ok)return[];const d=await r.json();if(!d)return[];return Object.keys(d).map(k=>({id:k,...d[k]}));}catch(e){return[];}}
+async function pushRef(rId,eeId){try{const r=await fetch(`${FDB}/referrals.json`,{method:'POST',body:JSON.stringify({referrerId:String(rId),refereeId:String(eeId),ts:Date.now()})});return r.ok;}catch(e){return false;}}
+async function syncRef(){const evs=await getRefs();if(!S.cri)S.cri=[];let cr=false;evs.forEach(ev=>{if(ev.referrerId===String(S.uid)&&!S.cri.includes(ev.id)){S.fc++;S.balance=+(S.balance+1).toFixed(2);S.ie=+(S.ie+1).toFixed(2);S.cri.push(ev.id);cr=true;}});if(cr){ss();rPro();rInv();toast('+1.00 USDT ⚡');}}
+async function syncWd(){try{const r=await fetch(`${FDB}/payouts.json?orderBy="userId"&equalTo="${String(S.uid)}"&_=${Date.now()}`,{cache:'no-store'});if(!r.ok)return;const d=await r.json();if(!d)return;let ch=false;Object.values(d).forEach(w=>{const loc=S.hist.find(h=>h.id===w.id);if(loc&&loc.status!==w.status){if(w.status==='rejected'){S.balance=+(S.balance+loc.amount).toFixed(2);toast('Refunded '+loc.amount+' USDT');}else if(w.status==='completed')toast('✓ Approved!');loc.status=w.status;ch=true;}});if(ch){ss();rPro();rWd();}}catch(e){}}
+function rWd(){document.getElementById('availBal').textContent=S.balance.toFixed(2);rHist();}
+function submitWd(){
+  const amt=parseFloat(document.getElementById('wdAmt').value);
+  const addr=document.getElementById('wdAddr').value.trim();
+  if(!amt||isNaN(amt)){toast(t('enterAmount'));return;}
+  if(amt<15){toast(t('minAmount'));return;}
+  if(amt>S.balance){toast(t('insufficientBalance'));return;}
+  if(!addr){toast(t('enterAddress'));return;}
+  const en={id:Date.now(),amount:amt,currency:'USDT',address:addr,date:new Date().toLocaleString(),status:'pending'};
+  S.hist.unshift(en);S.balance=+(S.balance-amt).toFixed(2);ss();
+  fetch(`${FDB}/payouts/${en.id}.json`,{method:'PUT',body:JSON.stringify({id:en.id,userId:String(S.uid),name:S.uname||'NovaCash User',amount:en.amount,currency:'USDT',address:en.address,date:en.date,status:'pending',ts:en.id})}).catch(()=>{});
+  document.getElementById('wdAmt').value='';document.getElementById('wdAddr').value='';
+  rPro();rWd();
+  const sc=document.getElementById('wdOk');sc.classList.add('show');
+  document.getElementById('wdDetail').innerHTML=`${amt} USDT · ${addr}`;
+  setTimeout(()=>sc.classList.remove('show'),6000);toast(t('withdrawSubmitted'));
+}
+function rHist(){
+  const l=document.getElementById('histList');
+  if(!S.hist.length){l.innerHTML='<div class="eh">No withdrawals yet</div>';return;}
+  l.innerHTML=S.hist.map(h=>`<div class="h-item"><div><div class="hi-a">${h.amount} USDT</div><div class="hi-d">${h.date}</div><div class="hi-ad">${h.address}</div></div><div class="sbg ${h.status}">${h.status==='completed'?'✓ '+t('completed'):h.status==='rejected'?'✗ Rejected':'· '+t('pending')}</div></div>`).join('');
+}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+init();
+</script>
+</body>
+</html>
