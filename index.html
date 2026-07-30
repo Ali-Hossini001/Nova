@@ -688,7 +688,7 @@ function watchAd(e){
   const iv=setInterval(()=>{s--;document.getElementById('ldTxt').textContent=`Ad playing... ${s}s`;if(s<=0){clearInterval(iv);adW=false;creditAd();}},1000);
 }
 
-function getLink(uid){return `https://t.me/PayDropBot/drop?startapp=${uid||'USER_ID'}`;}
+function getLink(uid){return `https://t.me/PayDrop1Bot/drop?startapp=${uid||'USER_ID'}`;}
 function renderInvite(){
   document.getElementById('inviteLinkText').textContent=getLink(S.userId);
   document.getElementById('friendsCount').textContent=S.friendsCount;
